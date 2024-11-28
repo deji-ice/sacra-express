@@ -115,8 +115,11 @@ export const sendOTP = async (req, res) => {
     const user = await User.findOne({ email }); // Check if user exists
     if (!user) return res.status(404).send("User not found"); // Return 404 if user not found
 
+    // Remove ObjectId wrapper from user._id
+    const userId = user._id.toString().replace(/^new ObjectId\("(.+)"\)$/, "$1");
+  
     // Generate OTP
-    let otp = await OTPgenerator(email);
+    let otp = await OTPgenerator(userId);
 
     // Send OTP to user's email
     const transporter = nodemailer.createTransport({
@@ -215,6 +218,24 @@ export const sendOTP = async (req, res) => {
         res.status(200).send("OTP sent successfully");
       }
     });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+export const login_otp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) res.status(400).send("Please provide email and OTP");
+
+    const user = await User.findOne({ email });
+    if (!user) res.status(404).send("User not found");
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    }); // expires in 1 hour
+
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).send(error.message);
   }
