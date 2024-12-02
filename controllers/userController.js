@@ -50,12 +50,12 @@ export const userLogin = async (req, res) => {
     if (!isCorrectPassword) {
       return res.status(401).send("Invalid password");
     }
-    const token = jwt.sign({ id: user._id },process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     }); // expires in 1 hour
 
     console.log(process.env.JWT_SECRET);
-    res.status(200).json({message: "Login successful", token});
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -104,5 +104,20 @@ export const updatePasswordById = async (req, res) => {
     res.status(200).send("Password updated successfully");
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const sendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }); // Check if user exists
+    if (!user) return res.status(404).send("User not found"); // Return 404 if user not found
+
+    // Generate OTP
+    let secretKey = await OTPgenrator(email); // Generate OTP
+    console.log(secretKey);
+    res.status(200).send("OTP sent successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
