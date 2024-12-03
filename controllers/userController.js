@@ -206,7 +206,6 @@ export const sendOTP = async (req, res) => {
         `,
     };
 
-    console.log(email);
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error("Error sending email: ", error);
