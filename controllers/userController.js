@@ -197,7 +197,7 @@ export const sendOTP = async (req, res) => {
                 <div class="otp">
                   ${otp}
                 </div>
-                <p>This OTP is valid for the next 10 minutes. If you did not request this, please ignore this email.</p>
+                <p>This OTP is valid for the next 5 minutes. If you did not request this, please ignore this email.</p>
                 <a href="#" class="button">Verify Now</a>
                 <div class="footer">
                   <p>Thank you for using our service.</p>
